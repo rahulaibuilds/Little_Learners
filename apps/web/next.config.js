@@ -1,8 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // Use pages directory router instead of app directory
-  // appDir: false,
+  experimental: {
+    appDir: true,
+  },
+  // Alias imports starting with @/
+  imports: {
+    "^@/(.*)$": "/src/$1",
+  },
 }
 
 module.exports = nextConfig

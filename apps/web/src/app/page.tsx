@@ -1,4 +1,6 @@
+"use client"
 import "./globals.css"
+import { Button } from "@/components/ui/button"
 
 export default function HomePage() {
   return (
@@ -52,7 +54,7 @@ export default function HomePage() {
           </div>
           <div className="mt-8">
             <Button
-              onClick={() => window.location.href "/parent/signup"}
+              onClick={() => window.location.href = "/parent/signup"}
               className="py-2 px-6 rounded-md bg-primary text-white font-medium"
             >
               Get Started →
