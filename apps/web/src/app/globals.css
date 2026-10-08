@@ -1,0 +1,76 @@
+/* LearnNest India - Global Styles */
+:root {
+  --primary: #2D3748;
+  --primary-light: #4A5568;
+  --secondary: #4A90E2;
+  --success: #7ED321;
+  --warning: #F6E05E;
+  --error: #ED4C67;
+  --info: #63B3ED;
+  --background: #F7F9FC;
+  --surface: #FFFFFF;
+  --on-primary: #FFFFFF;
+  --on-secondary: #FFFFFF;
+  --on-primary-light: #2D3748;
+  --on-background: #2D3748;
+  --on-surface: #2D3748;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-light);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* Focus visible */
+*:focus-visible {
+  outline: 2px solid var(--secondary);
+  outline-offset: 2px;
+}
+
+/* Skip link */
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.skip-link:focus {
+  left: 50%;
+  top: 20px;
+  width: auto;
+  height: auto;
+  padding: 8px;
+  background: var(--primary);
+  color: var(--on-primary);
+  border-radius: 4px;
+  z-index: 100;
+}

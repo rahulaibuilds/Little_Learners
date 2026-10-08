@@ -1,0 +1,1008 @@
+// LearnNest India - Database Schema
+// Prisma Schema for Indian Early Learning Platform
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum UserRole {
+  PARENT
+  ADMIN
+  CONTENT_EDITOR
+  SUPPORT_ADMIN
+}
+
+enum ChildLevel {
+  PLAYGROUP
+  NURSERY
+  LKG
+  UKG
+}
+
+enum LanguageCode {
+  EN
+  HI
+  HINGLISH
+  BN
+  MR
+  TA
+  TE
+  KN
+  ML
+  GU
+  PA
+  OR
+  AS
+  UR
+}
+
+enum ActivityType {
+  TAP_CORRECT
+  DRAG_DROP
+  MATCHING
+  SORTING
+  MEMORY
+  COUNTING
+  TRACING
+  PATTERN_COMPLETION
+  SEQUENCING
+  PICTURE_SELECTION
+  LISTENING
+  PRONUNCIATION
+  STORY_INTERACTION
+  MAZE
+  PUZZLE
+  SPOT_DIFFERENCE
+  SHAPE_MATCHING
+  COLOURING
+  EMOTION_RECOGNITION
+  DAILY_ROUTINE_ORDERING
+}
+
+enum ActivityStatus {
+  DRAFT
+  REVIEW
+  PUBLISHED
+  ARCHIVED
+}
+
+enum DifficultyLevel {
+  VERY_EASY
+  EASY
+  MEDIUM
+  HARD
+  VERY_HARD
+}
+
+enum MasteryLevel {
+  NOT_STARTED
+  INTRODUCED
+  PRACTICING
+  DEVELOPING
+  CONFIDENT
+}
+
+enum ConsentType {
+  TERMS_OF_SERVICE
+  PRIVACY_POLICY
+  CHILD_DATA_PROCESSING
+  MARKETING_COMMUNICATIONS
+  ANALYTICS
+}
+
+enum ConsentStatus {
+  GRANTED
+  WITHDRAWN
+  PENDING
+  EXPIRED
+}
+
+enum OTPPurpose {
+  SIGNUP_VERIFICATION
+  LOGIN_VERIFICATION
+  PASSWORD_RESET
+  EMAIL_VERIFICATION
+  PHONE_VERIFICATION
+  PARENT_VERIFICATION
+}
+
+enum SessionType {
+  PARENT
+  CHILD
+  ADMIN
+}
+
+enum RewardType {
+  STAR
+  BADGE
+  STICKER
+  MILESTONE
+}
+
+enum StoryStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum RhymeStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ContentState {
+  DRAFT
+  REVIEW
+  PUBLISHED
+  ARCHIVED
+}
+
+// ============================================
+// CORE USER & AUTH MODELS
+// ============================================
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  emailVerified DateTime?
+  phone         String?   @unique
+  phoneVerified DateTime?
+  passwordHash  String
+  role          UserRole  @default(PARENT)
+  isActive      Boolean   @default(true)
+  lastLoginAt   DateTime?
+  failedLoginAttempts Int @default(0)
+  lockedUntil   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  parent        Parent?
+  admin         Admin?
+  sessions      Session[]
+  otpVerifications OTPVerification[]
+  auditLogs     AuditLog[]
+
+  @@index([email])
+  @@index([phone])
+  @@index([role])
+  @@index([isActive])
+}
+
+model Parent {
+  id              String    @id @default(uuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName        String
+  preferredName   String?
+  city            String?
+  state           String?
+  preferredLanguage LanguageCode @default(EN)
+  timezone        String    @default("Asia/Kolkata")
+  avatarUrl       String?
+  onboardingCompleted Boolean @default(false)
+  onboardingStep  Int       @default(1)
+  marketingConsent Boolean  @default(false)
+  analyticsConsent Boolean  @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  deletedAt       DateTime?
+
+  children        ChildProfile[]
+  consents        ConsentRecord[]
+  recommendations ParentRecommendation[]
+  weeklyReports   WeeklyReport[]
+
+  @@index([userId])
+  @@index([preferredLanguage])
+}
+
+model ChildProfile {
+  id              String       @id @default(uuid())
+  parentId        String
+  parent          Parent       @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  name            String
+  nickname        String?
+  dateOfBirth     DateTime
+  level           ChildLevel
+  avatarId        String
+  preferredLanguage LanguageCode @default(EN)
+  pinHash         String?
+  pinEnabled      Boolean      @default(true)
+  isActive        Boolean      @default(true)
+  lastActiveAt    DateTime?
+  totalLearningTimeMs BigInt   @default(0)
+  currentStreak   Int          @default(0)
+  longestStreak   Int          @default(0)
+  lastStreakDate  DateTime?
+  settings        Json         @default("{}")
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  deletedAt       DateTime?
+
+  activityAttempts    ActivityAttempt[]
+  skillMasteries      SkillMastery[]
+  learningPaths       LearningPath[]
+  childBadges         ChildBadge[]
+  streaks             Streak[]
+  progressRecords     ChildProgress[]
+  offlineActivities   OfflineActivityCompletion[]
+  sessions            Session[]
+  weeklyReports       WeeklyReport[]
+  parentRecommendations ParentRecommendation[]
+
+  @@index([parentId])
+  @@index([level])
+  @@index([isActive])
+  @@index([lastActiveAt])
+}
+
+model Admin {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName    String
+  department  String?
+  permissions Json     @default("{}")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+}
+
+// ============================================
+// SESSION & OTP MODELS
+// ============================================
+
+model Session {
+  id           String       @id @default(uuid())
+  userId       String
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  childId      String?
+  child        ChildProfile? @relation(fields: [childId], references: [id], onDelete: SetNull)
+  type         SessionType
+  token        String       @unique
+  refreshToken String?      @unique
+  ipAddress    String?
+  userAgent    String?
+  deviceInfo   Json?
+  expiresAt    DateTime
+  revokedAt    DateTime?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  @@index([userId])
+  @@index([childId])
+  @@index([token])
+  @@index([refreshToken])
+  @@index([expiresAt])
+  @@index([type])
+}
+
+model OTPVerification {
+  id          String      @id @default(uuid())
+  userId      String?
+  user        User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contactType String      // email | phone
+  contactValue String
+  code        String
+  purpose     OTPPurpose
+  attempts    Int         @default(0)
+  maxAttempts Int         @default(3)
+  expiresAt   DateTime
+  verifiedAt  DateTime?
+  createdAt   DateTime    @default(now())
+
+  @@index([userId])
+  @@index([contactValue])
+  @@index([purpose])
+  @@index([expiresAt])
+}
+
+// ============================================
+// CONSENT & PRIVACY MODELS
+// ============================================
+
+model ConsentRecord {
+  id            String       @id @default(uuid())
+  parentId      String
+  parent        Parent       @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  consentType   ConsentType
+  consentVersion String
+  status        ConsentStatus @default(GRANTED)
+  ipAddress     String?
+  userAgent     String?
+  grantedAt     DateTime     @default(now())
+  withdrawnAt   DateTime?
+  expiresAt     DateTime?
+  metadata      Json         @default("{}")
+
+  @@index([parentId])
+  @@index([consentType])
+  @@index([status])
+  @@unique([parentId, consentType, consentVersion])
+}
+
+// ============================================
+// CURRICULUM MODELS
+// ============================================
+
+model LevelDomain {
+  id              String   @id @default(uuid())
+  levelId         String
+  level           Level      @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  domainId        String
+  domain          Domain     @relation(fields: [domainId], references: [id], onDelete: Cascade)
+  order           Int
+  createdAt       DateTime @default(now())
+
+  @@index([levelId, domainId])
+  @@index([domainId])
+}
+
+model Level {
+  id          String       @id @default(uuid())
+  code        ChildLevel   @unique
+  name        String
+  nameHi      String?
+  nameHinglish String?
+  description String?
+  descriptionHi String?
+  descriptionHinglish String?
+  ageMin      Int
+  ageMax      Int
+  order       Int          @unique
+  isActive    Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  domains     LevelDomain[]
+  competencies Competency[]
+  learningOutcomes LearningOutcome[]
+  activities  Activity[]
+  stories     Story[]
+  rhymes      Rhyme[]
+  childProgress ChildProgress[]
+
+  @@index([code])
+  @@index([order])
+  @@index([isActive])
+}
+
+model Domain {
+  id          String    @id @default(uuid())
+  code        String    @unique
+  name        String
+  nameHi      String?
+  nameHinglish String?
+  description String?
+  icon        String?
+  color       String?
+  order       Int
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  competencies Competency[]
+  learningOutcomes LearningOutcome[]
+  activities  Activity[]
+  levelDomains LevelDomain[]
+  childProgress ChildProgress[]
+
+  @@index([code])
+  @@index([order])
+  @@index([isActive])
+}
+
+// ============================================
+// COMPETENCY MODELS
+// ============================================
+
+model Competency {
+  id            String    @id @default(uuid())
+  code          String    @unique
+  levelId       String
+  level         Level     @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  domainId      String
+  domain        Domain    @relation(fields: [domainId], references: [id], onDelete: Cascade)
+  name          String
+  nameHi        String?
+  nameHinglish  String?
+  description   String?
+  descriptionHi String?
+  descriptionHinglish String?
+  order         Int
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  learningOutcomes LearningOutcome[]
+  activities       Activity[]
+  skillMasteries   SkillMastery[]
+
+  @@index([levelId])
+  @@index([domainId])
+  @@index([code])
+  @@index([order])
+  @@index([isActive])
+}
+
+// ============================================
+// LEARNING OUTCOME MODELS
+// ============================================
+
+model LearningOutcome {
+  id              String    @id @default(uuid())
+  code            String    @unique
+  competencyId    String
+  competency      Competency @relation(fields: [competencyId], references: [id], onDelete: Cascade)
+  levelId         String
+  level           Level     @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  domainId        String
+  domain          Domain    @relation(fields: [domainId], references: [id], onDelete: Cascade)
+  name            String
+  nameHi          String?
+  nameHinglish    String?
+  description     String?
+  descriptionHi   String?
+  descriptionHinglish String?
+  order           Int
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  activities      Activity[]
+
+  @@index([competencyId])
+  @@index([levelId])
+  @@index([domainId])
+  @@index([code])
+  @@index([order])
+  @@index([isActive])
+}
+
+// ============================================
+// ACTIVITY MODELS
+// ============================================
+
+model Activity {
+  id                  String         @id @default(uuid())
+  code                String         @unique
+  title               String
+  titleHi             String?
+  titleHinglish       String?
+  description         String?
+  descriptionHi       String?
+  descriptionHinglish String?
+  levelId             String
+  level               Level          @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  domainId            String
+  domain              Domain         @relation(fields: [domainId], references: [id], onDelete: Cascade)
+  competencyId        String
+  competency          Competency     @relation(fields: [competencyId], references: [id], onDelete: Cascade)
+  learningOutcomeId   String
+  learningOutcome     LearningOutcome @relation(fields: [learningOutcomeId], references: [id], onDelete: Cascade)
+  activityType        ActivityType
+  difficulty          DifficultyLevel @default(EASY)
+  language            LanguageCode   @default(EN)
+  estimatedDurationSec Int
+  instructions        String?
+  instructionsHi      String?
+  instructionsHinglish String?
+  media               Json           @default("{}") // images, audio, video URLs
+  configuration       Json           @default("{}") // activity-specific config
+  hints               Json           @default("[]")
+  reward              Json           @default("{}")
+  prerequisites       String[]       @default([])
+  status              ActivityStatus @default(DRAFT)
+  version             Int            @default(1)
+  publishedAt         DateTime?
+  createdBy           String?
+  updatedBy           String?
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+  deletedAt           DateTime?
+
+  questions           ActivityQuestion[]
+  attempts            ActivityAttempt[]
+  learningPathItems   LearningPathItem[]
+
+  @@index([levelId])
+  @@index([domainId])
+  @@index([competencyId])
+  @@index([learningOutcomeId])
+  @@index([activityType])
+  @@index([difficulty])
+  @@index([language])
+  @@index([status])
+  @@index([code])
+}
+
+// ============================================
+// ACTIVITY QUESTION MODELS
+// ============================================
+
+model ActivityQuestion {
+  id          String   @id @default(uuid())
+  activityId  String
+  activity    Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  questionText String
+  questionTextHi String?
+  questionTextHinglish String?
+  questionMedia Json   @default("{}")
+  questionType String   // single_choice | multiple_choice | text_input | drag_drop | tracing
+  options     Json     @default("[]")
+  correctAnswer Json
+  explanation String?
+  explanationHi String?
+  explanationHinglish String?
+  order       Int
+  points      Int      @default(10)
+  hints       Json     @default("[]")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  attempts    ActivityAttempt[]
+
+  @@index([activityId])
+  @@index([order])
+}
+
+// ============================================
+// ACTIVITY ATTEMPT MODELS
+// ============================================
+
+model ActivityAttempt {
+  id              String   @id @default(uuid())
+  childId         String
+  child           ChildProfile @relation(fields: [childId], references: [id], onDelete: Cascade)
+  activityId      String
+  activity        Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  questionId      String?
+  question        ActivityQuestion? @relation(fields: [questionId], references: [id], onDelete: SetNull)
+  sessionId       String?
+  answer          Json
+  isCorrect       Boolean
+  timeSpentMs     Int
+  attemptNumber   Int      @default(1)
+  hintsUsed       Int      @default(0)
+  completedAt     DateTime?
+  createdAt       DateTime @default(now())
+
+  @@index([childId])
+  @@index([activityId])
+  @@index([questionId])
+  @@index([sessionId])
+  @@index([createdAt])
+  @@index([isCorrect])
+}
+
+// ============================================
+// LEARNING PATH & PROGRESS MODELS
+// ============================================
+
+model LearningPath {
+  id              String   @id @default(uuid())
+  childId         String
+  child           ChildProfile @relation(fields: [childId], references: [id], onDelete: Cascade)
+  name            String
+  description     String?
+  date            DateTime @db.Date
+  status          String   @default("ACTIVE") // ACTIVE | COMPLETED | SKIPPED
+  totalDurationMs BigInt   @default(0)
+  completedDurationMs BigInt @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  items           LearningPathItem[]
+
+  @@index([childId])
+  @@index([date])
+  @@index([status])
+  @@unique([childId, date])
+}
+
+model LearningPathItem {
+  id              String   @id @default(uuid())
+  learningPathId  String
+  learningPath    LearningPath @relation(fields: [learningPathId], references: [id], onDelete: Cascade)
+  activityId      String
+  activity        Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  order           Int
+  status          String   @default("PENDING") // PENDING | IN_PROGRESS | COMPLETED | SKIPPED
+  startedAt       DateTime?
+  completedAt     DateTime?
+  timeSpentMs     BigInt   @default(0)
+  score           Int?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([learningPathId])
+  @@index([activityId])
+  @@index([order])
+  @@index([status])
+}
+
+model SkillMastery {
+  id              String       @id @default(uuid())
+  childId         String
+  child           ChildProfile @relation(fields: [childId], references: [id], onDelete: Cascade)
+  competencyId    String
+  competency      Competency   @relation(fields: [competencyId], references: [id], onDelete: Cascade)
+  level           MasteryLevel @default(NOT_STARTED)
+  score           Float        @default(0)
+  practiceCount   Int          @default(0)
+  correctCount    Int          @default(0)
+  totalAttempts   Int          @default(0)
+  lastPracticedAt DateTime?
+  masteredAt      DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@index([childId])
+  @@index([competencyId])
+  @@index([level])
+  @@unique([childId, competencyId])
+}
+
+model ChildProgress {
+  id              String   @id @default(uuid())
+  childId         String
+  child           ChildProfile @relation(fields: [childId], references: [id], onDelete: Cascade)
+  domainId        String
+  domain          Domain   @relation(fields: [domainId], references: [id], onDelete: Cascade)
+  levelId         String
+  level           Level    @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  activitiesCompleted Int  @default(0)
+  totalActivities Int      @default(0)
+  accuracy        Float    @default(0)
+  averageScore    Float    @default(0)
+  totalTimeSpentMs BigInt  @default(0)
+  lastActivityAt  DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([childId])
+  @@index([domainId])
+  @@index([levelId])
+  @@unique([childId, domainId, levelId])
+}
+
+// ============================================
+// REWARD MODELS
+// ============================================
+
+model Reward {
+  id              String      @id @default(uuid())
+  code            String      @unique
+  name            String
+  nameHi          String?
+  nameHinglish    String?
+  description     String?
+  descriptionHi   String?
+  descriptionHinglish String?
+  type            RewardType
+  icon            String
+  color           String?
+  points          Int         @default(0)
+  isActive        Boolean     @default(true)
+  isSecret        Boolean     @default(false)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  childBadges     ChildBadge[]
+
+  @@index([code])
+  @@index([type])
+  @@index([isActive])
+}
+
+model ChildBadge {
+  id          String   @id @default(uuid())
+  childId     String
+  child       ChildProfile @relation(fields: [childId], references: [id], onDelete: Cascade)
+  rewardId    String
+  reward      Reward   @relation(fields: [rewardId], references: [id], onDelete: Cascade)
+  earnedAt    DateTime @default(now())
+  metadata    Json     @default("{}")
+
+  @@index([childId])
+  @@index([rewardId])
+  @@index([earnedAt])
+  @@unique([childId, rewardId])
+}
+
+model Streak {
+  id              String   @id @default(uuid())
+  childId         String
+  child           ChildProfile @relation(fields: [childId], references: [id], onDelete: Cascade)
+  startDate       DateTime @db.Date
+  endDate         DateTime? @db.Date
+  currentCount    Int      @default(0)
+  longestCount    Int      @default(0)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([childId])
+  @@index([startDate])
+  @@index([isActive])
+}
+
+// ============================================
+// CONTENT MODELS
+// ============================================
+
+model Story {
+  id              String      @id @default(uuid())
+  code            String      @unique
+  title           String
+  titleHi         String?
+  titleHinglish   String?
+  description     String?
+  descriptionHi   String?
+  descriptionHinglish String?
+  levelId         String
+  level           Level       @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  language        LanguageCode @default(EN)
+  characters      Json        @default("[]")
+  coverImage      String?
+  audioUrl        String?
+  durationSec     Int
+  learningObjective String?
+  learningObjectiveHi String?
+  learningObjectiveHinglish String?
+  status          StoryStatus @default(DRAFT)
+  version         Int         @default(1)
+  publishedAt     DateTime?
+  createdBy       String?
+  updatedBy       String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  deletedAt       DateTime?
+
+  scenes          StoryScene[]
+
+  @@index([levelId])
+  @@index([language])
+  @@index([status])
+  @@index([code])
+}
+
+model StoryScene {
+  id              String   @id @default(uuid())
+  storyId         String
+  story           Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  sceneNumber     Int
+  title           String?
+  titleHi         String?
+  titleHinglish   String?
+  illustration    String?
+  narration       String?
+  narrationHi     String?
+  narrationHinglish String?
+  audioUrl        String?
+  animationUrl    String?
+  interactionType String?
+  interactionConfig Json   @default("{}")
+  questionId      String?
+  durationSec     Int
+  order           Int
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([storyId])
+  @@index([sceneNumber])
+  @@index([order])
+  @@unique([storyId, sceneNumber])
+}
+
+model Rhyme {
+  id              String      @id @default(uuid())
+  code            String      @unique
+  title           String
+  titleHi         String?
+  titleHinglish   String?
+  levelId         String
+  level           Level       @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  language        LanguageCode @default(EN)
+  lyrics          String
+  lyricsHi        String?
+  lyricsHinglish  String?
+  audioUrl        String?
+  illustration    String?
+  durationSec     Int
+  theme           String?
+  status          RhymeStatus @default(DRAFT)
+  version         Int         @default(1)
+  publishedAt     DateTime?
+  createdBy       String?
+  updatedBy       String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  deletedAt       DateTime?
+
+  @@index([levelId])
+  @@index([language])
+  @@index([status])
+  @@index([code])
+}
+
+// ============================================
+// RECOMMENDATION & OFFLINE ACTIVITY MODELS
+// ============================================
+
+model ParentRecommendation {
+  id              String   @id @default(uuid())
+  parentId        String
+  parent          Parent   @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  childId         String
+  child           ChildProfile @relation(fields: [childId], references: [id], onDelete: Cascade)
+  type            String   // STRENGTH | PRACTICE_AREA | ACTIVITY | OFFLINE
+  title           String
+  titleHi         String?
+  titleHinglish   String?
+  description     String?
+  descriptionHi   String?
+  descriptionHinglish String?
+  priority        Int      @default(0)
+  metadata        Json     @default("{}")
+  isRead          Boolean  @default(false)
+  dismissedAt     DateTime?
+  createdAt       DateTime @default(now())
+  expiresAt       DateTime?
+
+  @@index([parentId])
+  @@index([childId])
+  @@index([type])
+  @@index([isRead])
+  @@index([createdAt])
+}
+
+model OfflineActivity {
+  id              String   @id @default(uuid())
+  code            String   @unique
+  title           String
+  titleHi         String?
+  titleHinglish   String?
+  description     String
+  descriptionHi   String?
+  descriptionHinglish String?
+  level           ChildLevel?
+  domain          String?
+  competency      String?
+  materials       Json     @default("[]")
+  instructions    Json     @default("[]")
+  durationMin     Int
+  difficulty      DifficultyLevel @default(EASY)
+  language        LanguageCode @default(EN)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  completions     OfflineActivityCompletion[]
+
+  @@index([level])
+  @@index([domain])
+  @@index([isActive])
+  @@index([code])
+}
+
+model OfflineActivityCompletion {
+  id                  String   @id @default(uuid())
+  childId             String
+  child               ChildProfile @relation(fields: [childId], references: [id], onDelete: Cascade)
+  offlineActivityId   String
+  offlineActivity     OfflineActivity @relation(fields: [offlineActivityId], references: [id], onDelete: Cascade)
+  completedAt         DateTime @default(now())
+  parentNotes         String?
+  photos              Json     @default("[]")
+  rating              Int?     // 1-5
+
+  @@index([childId])
+  @@index([offlineActivityId])
+  @@index([completedAt])
+}
+
+// ============================================
+// WEEKLY REPORT MODEL
+// ============================================
+
+model WeeklyReport {
+  id              String   @id @default(uuid())
+  parentId        String
+  parent          Parent   @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  childId         String
+  child           ChildProfile @relation(fields: [childId], references: [id], onDelete: Cascade)
+  weekStartDate   DateTime @db.Date
+  weekEndDate     DateTime @db.Date
+  sessionsCount   Int      @default(0)
+  activitiesCount Int      @default(0)
+  totalTimeMs     BigInt   @default(0)
+  strengths       Json     @default("[]")
+  practiceAreas   Json     @default("[]")
+  skillProgress   Json     @default("{}")
+  rewardsEarned   Json     @default("[]")
+  recommendations Json     @default("[]")
+  offlineActivities Json   @default("[]")
+  generatedAt     DateTime @default(now())
+  sentAt          DateTime?
+  isRead          Boolean  @default(false)
+
+  @@index([parentId])
+  @@index([childId])
+  @@index([weekStartDate])
+  @@unique([childId, weekStartDate])
+}
+
+// ============================================
+// LANGUAGE & TRANSLATION MODELS
+// ============================================
+
+model Language {
+  id          String    @id @default(uuid())
+  code        LanguageCode @unique
+  name        String
+  nativeName  String
+  rtl         Boolean   @default(false)
+  isActive    Boolean   @default(true)
+  isDefault   Boolean   @default(false)
+  fallbackCode LanguageCode? @default(EN)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  translations Translation[]
+}
+
+model Translation {
+  id          String   @id @default(uuid())
+  languageId  String
+  language    Language @relation(fields: [languageId], references: [id], onDelete: Cascade)
+  namespace   String
+  key         String
+  value       String
+  context     String?
+  isVerified  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([languageId])
+  @@index([namespace])
+  @@index([key])
+  @@unique([languageId, namespace, key])
+}
+
+// ============================================
+// AUDIT LOG MODEL
+// ============================================
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action      String
+  entityType  String
+  entityId    String?
+  oldData     Json?
+  newData     Json?
+  ipAddress   String?
+  userAgent   String?
+  metadata    Json     @default("{}")
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([entityType])
+  @@index([entityId])
+  @@index([createdAt])
+}

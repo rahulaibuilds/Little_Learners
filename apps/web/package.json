@@ -1,0 +1,43 @@
+{
+  "name": "learnnest-web",
+  "version": "1.0.0",
+  "private": true,
+  "description": "LearnNest India - Web Application",
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "vitest",
+    "test:e2e": "playwright test",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:seed": "tsx ../../packages/database/seed.ts",
+    "storybook": "storybook dev -u",
+    "storybook:build": "storybook build"
+  },
+  "dependencies": {
+    "next": "^15.0.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "zod": "^3.23.8",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.433.0",
+    "framer-motion": "^11.2.0",
+    "date-fns": "^3.6.0",
+    "react-hot-toast": "^2.4.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.5.4",
+    "eslint": "^8.57.0",
+    "prettier": "^3.3.3",
+    "vitest": "^2.0.5",
+    "@playwright/test": "^1.44.0",
+    "prisma": "^5.18.0",
+    "tsx": "^4.19.0"
+  }
+}

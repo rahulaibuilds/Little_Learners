@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@learnnest/*": ["packages/*/src"],
+      "@learnnest/database": ["packages/database/src"],
+      "@learnnest/ui": ["packages/ui/src"],
+      "@learnnest/types": ["packages/types/src"],
+      "@learnnest/validation": ["packages/validation/src"],
+      "@learnnest/config": ["packages/config/src"]
+    }
+  },
+  "exclude": ["node_modules", "dist", "build", ".next", "coverage"],
+  "references": [
+    { "path": "./packages/database" },
+    { "path": "./packages/ui" },
+    { "path": "./packages/types" },
+    { "path": "./packages/validation" },
+    { "path": "./packages/config" },
+    { "path": "./apps/web" }
+  ]
+}

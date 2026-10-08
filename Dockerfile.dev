@@ -1,0 +1,25 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    postgresql-client \
+    redis
+
+COPY package*.json ./
+COPY pnpm-lock.yaml* ./
+COPY turbo.json ./
+
+RUN npm install -g pnpm turbo
+
+COPY packages ./packages
+COPY apps ./apps
+
+RUN pnpm install --frozen-lockfile
+
+EXPOSE 3000
+
+CMD ["pnpm", "dev"]
