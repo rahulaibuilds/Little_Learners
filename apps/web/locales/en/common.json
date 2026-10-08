@@ -1,0 +1,125 @@
+{
+  "appName": "LearnNest India",
+  "description": "Indian Early Learning & Kindergarten Platform",
+  
+  "common": {
+    "continue": "Continue",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "next": "Next",
+    "back": "Back",
+    "error": "Error",
+    "success": "Success",
+    "loading": "Loading",
+    "saveChanges": "Save Changes"
+  },
+  
+  "auth": {
+    "signup": "Sign up",
+    "login": "Log in",
+    "logout": "Log out",
+    "or_separator": "or",
+    "reset_password": "Reset password",
+    "send_link": "Send reset link",
+    "signin_with": "Sign in with",
+    "dont_account": "Don't have an account?",
+    "have_account": "Already have an account?"
+  },
+  
+  "parent": {
+    "signup": "Parent Signup",
+    "account_type": "Account Type",
+    "parent_guardian": "Parent / Guardian",
+    "continue": "Continue",
+    "parent_details": "Parent Details",
+    "full_name": "Full Name",
+    "mobile_number": "Mobile Number",
+    "email": "Email",
+    "password": "Password",
+    "confirm_password": "Confirm Password",
+    "city": "City",
+    "state": "State",
+    "preferred_language": "Preferred Language",
+    "otp_verification": "Mobile OTP Verification",
+    "send_otp": "Send OTP",
+    "verify_otp": "Verify OTP",
+    "resend_otp": "Resend OTP",
+    "otp_sent": "We've sent an OTP to your mobile number ending in {last4}",
+    "otp_expiry": "OTP will expire in {minutes}:{seconds}",
+    "incorrect_otp": "Incorrect OTP. {remaining} attempts remaining.",
+    "too_many_attempts": "Too many failed attempts. Please try again later.",
+    "account_created": "Account Created!",
+    "welcome": "Welcome to LearnNest India, {name}. Let's create your child's learning profile.",
+    "continue_children": "Continue to Children"
+  },
+  
+  "child": {
+    "onboarding": "Let's create your child's learning profile",
+    "child_name": "Child's Name",
+    "nickname": "Nickname (optional)",
+    "date_of_birth": "Date of Birth",
+    "select_level": "Select Level",
+    "playgroup": "Playgroup / Pre-Nursery",
+    "nursery": "Nursery",
+    "lkg": "LKG",
+    "ukg": "UKG",
+    "recommended": "Recommended based on age",
+    "select_language": "Select Language",
+    "english": "English",
+    "hindi": "Hindi",
+    "hinglish": "Hinglish",
+    "set_pin": "Set PIN for Child Access",
+    "pin": "PIN",
+    "confirm_pin": "Confirm PIN",
+    "pin_set": "PIN Set!",
+    "child_access": "Child Access",
+    "child_name_label": "Child Name",
+    "avatar": "Avatar",
+    "animal_elephant": "Elephant",
+    "animal_tiger": "Tiger",
+    "animal_monkey": "Monkey",
+    "pin_description": "Your child can now access LearnNest with their name and PIN",
+    "continue_child_mode": "Continue to Child Mode"
+  },
+  
+  "dashboard": {
+    "welcome": "Good Morning! 👋",
+    "today_learning": "Today's Learning",
+    "learning_journey": "5 Day Learning Journey",
+    "continue_learning": "Continue Learning →",
+    "skill_overview": "Skill Overview",
+    "literacy": "Literacy",
+    "numeracy": "Numeracy",
+    "creativity": "Creativity",
+    "communication": "Communication",
+    "social_skills": "Social Skills",
+    "view_all_reports": "View All Reports",
+    "activities": "Activities",
+    "recommendations": "Recommendations",
+    "settings": "Settings",
+    "privacy": "Privacy"
+  },
+  
+  "child_home": {
+    "hi": "Hi {name}! 👋",
+    "what_shall_we_explore": "What shall we explore today?",
+    "abc_adventure": "ABC Adventure",
+    "number_jungle": "Number Jungle",
+    "creative_corner": "Creative Corner",
+    "story_time": "Story Time",
+    "rhymes": "Rhymes",
+    "explore_my_world": "Explore My World",
+    "my_rewards": "My Rewards",
+    "reduced_motion": "Reduced motion mode enabled",
+    "accessibility": "Accessibility"
+  },
+  
+  "levels": {
+    "playgroup": "Playgroup / Pre-Nursery",
+    "nursery": "Nursery",
+    "lkg": "LKG",
+    "ukg": "UKG"
+  }
+  
+}

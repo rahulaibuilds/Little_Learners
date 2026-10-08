@@ -1,13 +1,14 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Input } from "@/components/ui/input"
-import { Select } from "@//components/ui/select"
-import { Avatar } from "@/components/ui/avatar"
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { Input } from "../../../components/ui/input"
+import { Select } from "../../../components/ui/select"
+import { Avatar } from "../../../components/ui/avatar"
+import { Card } from "../../../components/ui/card"
+import { Button } from "../../../components/ui/button"
 import { useRouter } from "next/navigation"
 import { useSearchParams } from "next/navigation"
+import { useTranslation } from "next-i18next"
 import { z } from "zod"
 
 // Level options
@@ -42,6 +43,8 @@ export default function ChildOnboardingPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const parentId = searchParams.get("parentId") || ""
+
+  const { t } = useTranslation()
 
   // Validate form
   const validateStep = (stepNum: number): boolean => {
@@ -88,7 +91,7 @@ export default function ChildOnboardingPage() {
   const handleSetPin = async () => {
     if (pin !== confirmPin || pin.length !== 4) {
       setIsLoading(false)
-      alert("PINs don't match. Please enter the same 4-digit PIN.")
+      alert(t("child.pin_dont_match"))
       return
     }
 
@@ -98,6 +101,7 @@ export default function ChildOnboardingPage() {
     await new Promise((resolve) => setTimeout(resolve, 1000))
     setPinSet(true)
     setIsLoading(false)
+    // Navigate to child select/login
     router.push("/child/select")
   }
 
@@ -106,21 +110,21 @@ export default function ChildOnboardingPage() {
       <Card className="w-full max-w-md mx-auto">
         <div className="p-6">
           <h2 className="text-2xl font-bold mb-4">
-            {"Step " + step}: Let's create your child's learning profile"}
+            {t("child.onboarding", { step: `Step ${step}` })}
           </h2>
 
           {/* Step 1: Child Name */}
           {step === 1 && (
             <div>
               <p className="text-sm text-muted-foreground mb-4">
-                Enter your child's name to get started.
+                {t("child.enter_child_name")}
               </p>
 
               <form onSubmit={() => handleNext()} className="space-y-4">
                 <Input
                   type="text"
                   name="childName"
-                  placeholder="Aarav"
+                  placeholder={t("child.child_name")}
                   value={formData.childName}
                   onChange={(e) => setFormData({ ...formData, childName: e.target.value })}
                   required
@@ -140,23 +144,23 @@ export default function ChildOnboardingPage() {
           {step === 2 && (
             <div>
               <p className="text-sm text-muted-foreground mb-4">
-                Provide your child's details for age-appropriate learning.
+                {t("child.provide_child_details")}
               </p>
 
               <form onSubmit={() => handleNext()} className="space-y-4">
                 <Input
                   type="text"
                   name="childNickname"
-                  placeholder="Aaru"
+                  placeholder={t("child.nickname")}
                   value={formData.childNickname}
                   onChange={(e) => setFormData({ ...formData, childNickname: e.target.value })}
-                  placeholder="Nickname (optional)"
+                  placeholder={t("child.nickname_optional")}
                   className="input-lg"
                 />
                 <Input
                   type="text"
                   name="childName"
-                  placeholder="Aarav"
+                  placeholder={t("child.child_name")}
                   value={formData.childName}
                   onChange={(e) => setFormData({ ...formData, childName: e.target.value })}
                   required
@@ -175,10 +179,10 @@ export default function ChildOnboardingPage() {
                   <Select
                     options={levels}
                     value={formData.level}
-                    onValueChange={(value) => setFormData({ ...formData, level: value })}
+                    onValueChange={(value: string) => setFormData({ ...formData, level: value })}
                     className="input-lg"
                   >
-                    <Select.Item value="">Select Level</Select.Item>
+                    <Select.Item value="">{t("child.select_level")}</Select.Item>
                   </Select>
                 </div>
 
@@ -188,9 +192,9 @@ export default function ChildOnboardingPage() {
                   onChange={(e) => setFormData({ ...formData, preferredLanguage: e.target.value as "EN" | "HI" | "HINGLISH" })}
                   className="input-lg rounded border px-3 py-2"
                 >
-                  <option value="EN">English</option>
-                  <option value="HI">Hindi</option>
-                  <option value="HINGLISH">Hinglish</option>
+                  <option value="EN">{t("parent.english")}</option>
+                  <option value="HI">{t("parent.hindi")}</option>
+                  <option value="HINGLISH">{t("parent.hinglish")}</option>
                 </select>
 
                 <Button
@@ -207,7 +211,7 @@ export default function ChildOnboardingPage() {
           {step === 3 && (
             <div>
               <p className="text-sm text-muted-foreground mb-4">
-                Choose an avatar and set a PIN for child access.
+                {t("child.choose_avatar_pin")}
               </p>
 
               <div className="grid grid-cols-3 gap-2 mb-4">
@@ -265,7 +269,7 @@ export default function ChildOnboardingPage() {
                   placeholder="1234"
                   value={pin}
                   onChange={(e) => setPin(e.target.value)}
-                  placeholder="PIN"
+                  placeholder={t("child.pin")}
                   required
                   className="input-lg"
                   inputMode="numeric"
@@ -276,7 +280,7 @@ export default function ChildOnboardingPage() {
                   placeholder="1234"
                   value={confirmPin}
                   onChange={(e) => setConfirmPin(e.target.value)}
-                  placeholder="Confirm PIN"
+                  placeholder={t("child.confirm_pin")}
                   required
                   className="input-lg"
                   inputMode="numeric"
@@ -310,15 +314,17 @@ export default function ChildOnboardingPage() {
                   />
                 </svg>
               </div>
-              <h2 className="text-2xl font-bold mb-2">PIN Set!</h2>
+              <h2 className="text-2xl font-bold mb-2">{t("child.pin_set")}</h2>
               <p className="text-muted-foreground">
-                Your child can now access LearnNest with their name and PIN.
+                {t("child.child_access", {
+                  name: formData.childName,
+                  avatar: formData.avatar,
+                })}
               </p>
               <Button
                 onClick={() => router.push("/child/select")}
-                className="my-4 py-2 px-6 rounded-md bg-secondary text-white font-medium"
-              >
-                Continue to Child Mode
+                className="my-4 py-2 px-6 rounded-md bg-secondary text-white font-medium">
+                {t("child.continue_child_mode")}
               </Button>
             </div>
           )}
@@ -326,12 +332,11 @@ export default function ChildOnboardingPage() {
           {/* Error */}
           {step > 4 && (
             <div className="p-6 text-center text-error">
-              <p>Something went wrong. Please try again.</p>
+              <p>{t("general.something_went_wrong")}</p>
               <Button
                 onClick={() => setStep(1)}
-                className="my-4 py-2 px-4 rounded-md bg-error/20 text-error hover:text-error/90"
-              >
-                Try Again
+                className="my-4 py-2 px-4 rounded-md bg-error/20 text-error hover:text-error/90">
+                {t("general.try_again")}
               </Button>
             </div>
           )}

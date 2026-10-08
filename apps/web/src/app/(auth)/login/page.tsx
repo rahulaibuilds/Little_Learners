@@ -1,9 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
+import { Input } from "../../components/ui/input"
+import { Button } from "../../components/ui/button"
+import { Card } from "../../components/ui/card"
 import { useRouter } from "next/navigation"
 
 export default function LoginPage() {

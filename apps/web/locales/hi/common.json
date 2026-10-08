@@ -1,0 +1,125 @@
+{
+  "appName": "LearnNest India",
+  "description": "भारतीय प्रारंभिक सीखने और किंडरगार्टन मंच",
+  
+  "common": {
+    "continue": "जारी रखें",
+    "submit": "जमा करें",
+    "cancel": "रद्द करें",
+    "save": "सेव करें",
+    "next": "अगला",
+    "back": "पीछे",
+    "error": "त्रुटि",
+    "success": "सफलता",
+    "loading": "लोड हो रहा है",
+    "saveChanges": "बदलाव बचाएं"
+  },
+  
+  "auth": {
+    "signup": "माता-पिता के रूप में साइन अप करें",
+    "login": "लॉग इन करें",
+    "logout": "लॉग आउट करें",
+    "or_separator": "या",
+    "reset_password": "पासवर्ड रीसेट करें",
+    "send_link": "रीसेट लिंक भेजें",
+    "signin_with": "{method} से साइन इन करें",
+    "dont_account": "एकाउंट नहीं है?",
+    "have_account": "आपके पास पहले से एकाउंट है?"
+  },
+  
+  "parent": {
+    "signup": "माता-पिता साइनअप",
+    "account_type": "खाता प्रकार",
+    "parent_guardian": "माता-पिता / अभिभावक",
+    "continue": "जारी रखें",
+    "parent_details": "माता-पिता विवरण",
+    "full_name": "पूरा नाम",
+    "mobile_number": "मोबाइल नंबर",
+    "email": "ईमेल",
+    "password": "पासवर्ड",
+    "confirm_password": "पासवर्ड की पुष्टि",
+    "city": "शहर",
+    "state": "राज्य",
+    "preferred_language": "पreferred भाषा",
+    "otp_verification": "मोबाइल OTP सत्यापन",
+    "send_otp": "OTP भेजें",
+    "verify_otp": "OTP सत्यापित करें",
+    "resend_otp": "OTB दोबारा भेजें",
+    "otp_sent": "हमने आपके मोबाइल नंबर के अंत में {last4} पर OTP भेजा है",
+    "otp_expiry": "OTP {minutes} मिनट {seconds} सेकंड में समाप्त होगा",
+    "incorrect_otp": "गलत OTP। शेष {remaining} प्रयास",
+    "too_many_attempts": "बहुत सारे असफल प्रयास। कृपया बाद में प्रयास करें।",
+    "account_created": "खाता बनाया गया!",
+    "welcome": "LearnNest India में आपका स्वागत है, {name}. अपने बच्चे की सीखने की प्रोफ़ाइल बनाएं।",
+    "continue_children": "बच्चों को जारी रखें"
+  },
+  
+  "child": {
+    "onboarding": "अपने बच्चे की सीखने की प्रोफ़ाइल बनाएं",
+    "child_name": "बच्चे का नाम",
+    "nickname": "छद्म नाम (वैकल्पिक)",
+    "date_of_birth": "जन्म तिथि",
+    "select_level": "स्तर चुनें",
+    "playgroup": "प्लेग्रूप / प्री-नर्सरी",
+    "nursery": "नर्सरी",
+    "lkg": "एलकेजी",
+    "ukg": "यूकेजी",
+    "recommended": "आयु के आधार पर सिफारिश की गई",
+    "select_language": "भाषा चुनें",
+    "english": "अंग्रेज़ी",
+    "hindi": "हिन्दी",
+    "hinglish": "हिंग्लिश",
+    "set_pin": "बच्चे के लिए PIN सेट करें",
+    "pin": "PIN",
+    "confirm_pin": "PIN की पुष्टि",
+    "pin_set": "PIN सेट!",
+    "child_access": "बच्चे तक पहुँच",
+    "child_name_label": "बच्चे का नाम",
+    "avatar": "आवतार",
+    "animal_elephant": "हाथी",
+    "animal_tiger": "बाघ",
+    "animal_monkey": "बंदर",
+    "pin_description": "अब आपके बच्चे अपना नाम और PIN के साथ LearnNest तक पहुंच सकते हैं",
+    "continue_child_mode": "बच्चा मोड में जारी रखें"
+  },
+  
+  "dashboard": {
+    "welcome": "सुप्रभात! 👋",
+    "today_learning": "आज की सीख",
+    "learning_journey": "5 दिनों की सीखने की यात्रा",
+    "continue_learning": "सीखना जारी रखें →",
+    "skill_overview": "कौनक क्षमता अवलोकन",
+    "literacy": "भाषा और साक्षरता",
+    "numeracy": "गणितीय सोच",
+    "creativity": "रचनात्मकता",
+    "communication": "संचार",
+    "social_skills": "सामाजिक कौशल",
+    "view_all_reports": "सभी रिपोर्ट देखें",
+    "activities": "गतिविधियाँ",
+    "recommendations": "सिफारिशें",
+    "settings": "सेटिंग्स",
+    "privacy": "निजता"
+  },
+  
+  "child_home": {
+    "hi": "नमस्ते {name}! 👋",
+    "what_shall_we_explore": "आज हम क्या explor करेंगे?",
+    "abc_adventure": "अक्षर साहसिक",
+    "number_jungle": "संख्या जंगल",
+    "creative_corner": "रचनात्मक कोना",
+    "story_time": "कहानी समय",
+    "rhymes": "कविताएँ",
+    "explore_my_world": "मेरा संसार खोजें",
+    "my_rewards": "मेरे पुरस्कार",
+    "reduced_motion": "कम गति मोड सक्षम",
+    "accessibility": "उपलब्धता"
+  },
+  
+  "levels": {
+    "playgroup": "प्लेग्रूप / प्री-नर्सरी",
+    "nursery": "नर्सरी",
+    "lkg": "एलकेजी",
+    "ukg": "यूकेजी"
+  }
+  
+}

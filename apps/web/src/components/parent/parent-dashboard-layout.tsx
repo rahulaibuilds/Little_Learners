@@ -1,50 +1,42 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Card } from "../../components/ui/card"
-import { ProgressBar } from "../../components/ui/progress-bar"
-import { Badge } from "../../components/ui/badge"
+import { Card } from "../components/ui/card"
+import { ProgressBar } from "../components/ui/progress-bar"
+import { Badge } from "../components/ui/badge"
 import { ActivityCard } from "@components/activities/activity-card"
 import { ChildSelector } from "@components/parent/child-selector"
 import { useRouter } from "next/navigation"
+import { useTranslation } from "next-i18next"
 
-export default function ParentDashboardPage() {
+interface Child {
+  id: string
+  name: string
+  avatar: string
+  level: string
+  age: number
+  progress?: number
+  lastActive?: string
+}
+
+export const ParentDashboardLayout = ({
+  children,
+  onChildSelect,
+}: {
+  children: Child[]
+  onChildSelect: (child: Child) => void
+}) => {
   const [showMenu, setShowMenu] = useState(false)
   const router = useRouter()
-
-  // Sample child data
-  const children = [
-    {
-      id: "1",
-      name: "Aarav",
-      avatar: "🐼",
-      level: "UKG",
-      age: 5,
-      progress: 80,
-      lastActive: "Today at 2:30 PM",
-    },
-    {
-      id: "2",
-      name: "Kiara",
-      avatar: "🐯",
-      level: "LKG",
-      age: 4,
-      progress: 65,
-      lastActive: "Yesterday at 4:15 PM",
-    },
-  ]
-
-  const handleChildSelect = (child: any) => {
-    // Navigate to child-specific dashboard
-    router.push(`/child/select?childId=${child.id}`)
-  }
+  const { t } = useTranslation()
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Top Navigation */}
       <nav className="bg-primary/5 border-b border-primary/10">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Avatar name="LearnNest" className="w-8 h-8">
+            <span className="text-base font-medium text-primary">
               <svg
                 className="w-5 h-5"
                 fill="none"
@@ -58,7 +50,8 @@ export default function ParentDashboardPage() {
                   d="M12 2L2 7h20l-8 5-8-5z"
                 />
               </svg>
-            </Avatar>
+              LearnNest India
+            </span>
             <div>
               <h1 className="text-xl font-bold">LearnNest India</h1>
               <p className="text-sm text-primary/60">Foundational Learning</p>
@@ -82,7 +75,6 @@ export default function ParentDashboardPage() {
                 stroke-linejoin="round"
                 d="M4 6h16M4 12h16M4 18h16"
               />
-            </path>
             </svg>
           </button>
         </div>
@@ -92,7 +84,7 @@ export default function ParentDashboardPage() {
         {/* Child Selector */}
         <ChildSelector
           children={children}
-          onSelect={handleChildSelect}
+          onSelect={onChildSelect}
           showMenu={showMenu}
           setShowMenu={setShowMenu}
         />
@@ -118,13 +110,15 @@ export default function ParentDashboardPage() {
                 </svg>
               </div>
               <div>
-                <h2 className="text-xl font-bold">Good Morning! 👋</h2>
+                <h2 className="text-xl font-bold">{t("dashboard.welcome")}</h2>
                 <p className="text-muted-foreground">
-                  Aarav
-                  <span className="ml-1 ukg-badge">UKG | Age 5</span>
+                  {children[0]?.name || "Aarav"}
+                  <span className="ml-1 ukg-badge">
+                    {children[0]?.level || "UKG"} | Age {children[0]?.age || 5}
+                  </span>
                 </p>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Last active: Today at 2:30 PM
+                  Last active: {children[0]?.lastActive || "Today at 2:30 PM"}
                 </p>
               </div>
             </div>
@@ -132,7 +126,7 @@ export default function ParentDashboardPage() {
 
           {/* Today's Learning Card */}
           <Card className="p-6">
-            <h3 className="text-lg font-medium mb-4">Today's Learning</h3>
+            <h3 className="text-lg font-medium mb-4">{t("dashboard.today_learning")}</h3>
             <ProgressBar
               value={80}
               max={100}
@@ -140,7 +134,7 @@ export default function ParentDashboardPage() {
             />
             <p className="text-2xl font-bold">80%</p>
             <p className="text-muted-foreground">
-              5 Day Learning Journey
+              {t("dashboard.learning_journey")}
             </p>
           </Card>
         </div>
@@ -148,7 +142,7 @@ export default function ParentDashboardPage() {
         {/* Skill Overview */}
         <div className="mt-6 grid grid-cols-2 gap-2">
           <div>
-            <p className="text-xs text-muted-foreground">Literacy</p>
+            <p className="text-xs text-muted-foreground">{t("dashboard.literacy")}</p>
             <div className="mt-1">
               <div className="flex justify-between text-xs">
                 <span>⭐⭐⭐⭐☆</span>
@@ -158,7 +152,7 @@ export default function ParentDashboardPage() {
             </div>
           </div>
           <div>
-            <p className="text-xs text-muted-foreground">Numeracy</p>
+            <p className="text-xs text-muted-foreground">{t("dashboard.numeracy")}</p>
             <div className="mt-1">
               <div className="flex justify-between text-xs">
                 <span>⭐⭐⭐☆☆</span>
@@ -174,13 +168,13 @@ export default function ParentDashboardPage() {
           <Button
             className="flex-1 py-2 px-4 rounded-md bg-primary text-white font-medium"
           >
-            Continue Learning
+            {t("dashboard.continue_learning")}
           </Button>
           <Button
             variant="outline"
             className="flex-1 py-2 px-4 rounded-md border-2 border-primary text-primary font-medium"
           >
-            Activities
+            {t("dashboard.activities")}
           </Button>
         </div>
       </main>
