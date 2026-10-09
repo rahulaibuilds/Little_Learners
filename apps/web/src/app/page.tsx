@@ -18,7 +18,7 @@ export default function HomePage() {
             <div>
               <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-4">
                 <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path className="stroke-width-2" stroke-linecap="round" stroke-linejoin="round" d="M12 2L2 7h20l-8 5-8-5z" />
+                  <path className="stroke-width-2" strokeLinecap="round" strokeLinejoin="round" d="M12 2L2 7h20l-8 5-8-5z" />
                 </svg>
               </div>
               <h3 className="text-xl font-medium">Playgroup (2-3 yrs)</h3>
@@ -27,7 +27,7 @@ export default function HomePage() {
             <div>
               <div className="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center mx-auto mb-4">
                 <svg className="w-6 h-6 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path className="stroke-width-2" stroke-linecap="round" stroke-linejoin="round" d="M12 2L2 7h20l-8 5-8-5z" />
+                  <path className="stroke-width-2" strokeLinecap="round" strokeLinejoin="round" d="M12 2L2 7h20l-8 5-8-5z" />
                 </svg>
               </div>
               <h3 className="text-xl font-medium">Nursery (3-4 yrs)</h3>
@@ -36,7 +36,7 @@ export default function HomePage() {
             <div>
               <div className="w-12 h-12 rounded-lg bg-success/10 flex items-center justify-center mx-auto mb-4">
                 <svg className="w-6 h-6 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path className="stroke-width-2" stroke-linecap="round" stroke-linejoin="round" d="M12 2L2 7h20l-8 5-8-5z" />
+                  <path className="stroke-width-2" strokeLinecap="round" strokeLinejoin="round" d="M12 2L2 7h20l-8 5-8-5z" />
                 </svg>
               </div>
               <h3 className="text-xl font-medium">LKG (4-5 yrs)</h3>
@@ -45,7 +45,7 @@ export default function HomePage() {
             <div>
               <div className="w-12 h-12 rounded-lg bg-warning/10 flex items-center justify-center mx-auto mb-4">
                 <svg className="w-6 h-6 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path className="stroke-width-2" stroke-linecap="round" stroke-linejoin="round" d="M12 2L2 7h20l-8 5-8-5z" />
+                  <path className="stroke-width-2" strokeLinecap="round" strokeLinejoin="round" d="M12 2L2 7h20l-8 5-8-5z" />
                 </svg>
               </div>
               <h3 className="text-xl font-medium">UKG (5-6 yrs)</h3>
@@ -54,7 +54,7 @@ export default function HomePage() {
           </div>
           <div className="mt-8">
             <Button
-              onClick={() => window.location.href = "/parent/signup"}
+              onClick={() => window.location.href = "/auth/signup"}
               className="py-2 px-6 rounded-md bg-primary text-white font-medium"
             >
               Get Started →

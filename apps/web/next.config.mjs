@@ -3,9 +3,6 @@ const path = require("path")
 
 const nextConfig = {
   reactStrictMode: true,
-  experimental: {
-    appDir: true,
-  },
   images: {
     domains: ["localhost", "*.learnnest.in"],
     remotePatterns: [

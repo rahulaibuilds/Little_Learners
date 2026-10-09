@@ -1,9 +1,9 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { Input } from "../../components/ui/input"
-import { Button } from "../../components/ui/button"
-import { Card } from "../../components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
 import { useRouter } from "next/navigation"
 import { useTranslation } from "next-i18next"
 import { otpService } from "@/services/otp.service"

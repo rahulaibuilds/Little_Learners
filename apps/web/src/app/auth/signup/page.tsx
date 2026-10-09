@@ -1,10 +1,10 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Input } from "../../components/ui/input"
-import { Button } from "../../components/ui/button"
-import { Card } from "../../components/ui/card"
-import { AlertDialog } from "../../components/ui/alert-dialog"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import { AlertDialog } from "@/components/ui/alert-dialog"
 import { useRouter } from "next/navigation"
 import { z } from "zod"
 
