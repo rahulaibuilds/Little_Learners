@@ -1427,7 +1427,7 @@ async function main() {
   const story1 = await prisma.story.create({
     data: {
       code: 'STORY_001',
-      title: 'The Little Elephant's Trunk',
+      title: "The Little Elephant's Trunk",
       titleHi: 'छोटी हाथी की सूंड',
       titleHinglish: 'Choti Haathi Ki Sund',
       description: 'A little elephant learns to use his trunk to help friends',
@@ -1471,7 +1471,7 @@ async function main() {
   const story3 = await prisma.story.create({
     data: {
       code: 'STORY_003',
-      title: 'Riya's Rainbow',
+      title: "Riya's Rainbow",
       titleHi: 'रीनबो की रिया',
       titleHinglish: 'Riya Ka Rainbow',
       description: 'Riya discovers the colors of the rainbow and their names',
@@ -1575,4 +1575,4 @@ main()
     console.error('❌ Seed failed:', e)
     await prisma.$disconnect()
     process.exit(1)
-  })
+  });

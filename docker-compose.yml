@@ -1,23 +1,21 @@
-version: '3.8'
-
 services:
-  postgres:
-    image: postgres:16-alpine
-    container_name: learnnest-postgres
+  mysql:
+    image: mysql:8.0
+    container_name: learnnest-mysql
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: learnnest
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: learnnest
+      MYSQL_USER: learnnest_user
+      MYSQL_PASSWORD: learnnest_password
     ports:
-      - "5432:5432"
+      - "3307:3306"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./packages/database/prisma/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
     networks:
       - learnnest-network
 
@@ -42,7 +40,7 @@ services:
       dockerfile: Dockerfile.dev
     container_name: learnnest-web
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/learnnest?schema=public
+      - DATABASE_URL=mysql://learnnest_user:learnnest_password@mysql:3306/learnnest
       - REDIS_URL=redis://redis:6379
       - NODE_ENV=development
     ports:
@@ -52,7 +50,7 @@ services:
       - /app/node_modules
       - /app/.next
     depends_on:
-      postgres:
+      mysql:
         condition: service_healthy
       redis:
         condition: service_healthy
@@ -61,7 +59,7 @@ services:
     command: sh -c "npm run db:migrate && npm run dev"
 
 volumes:
-  postgres_data:
+  mysql_data:
   redis_data:
 
 networks:

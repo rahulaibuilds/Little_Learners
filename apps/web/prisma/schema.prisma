@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -152,7 +152,7 @@ enum ContentState {
 // ============================================
 
 model User {
-  id            String    @id @default(uuid())
+  id            String    @id @default(cuid())
   email         String    @unique
   emailVerified DateTime?
   phone         String?   @unique
@@ -180,7 +180,7 @@ model User {
 }
 
 model Parent {
-  id              String    @id @default(uuid())
+  id              String    @id @default(cuid())
   userId          String    @unique
   user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   fullName        String
@@ -208,7 +208,7 @@ model Parent {
 }
 
 model ChildProfile {
-  id              String       @id @default(uuid())
+  id              String       @id @default(cuid())
   parentId        String
   parent          Parent       @relation(fields: [parentId], references: [id], onDelete: Cascade)
   name            String
@@ -248,7 +248,7 @@ model ChildProfile {
 }
 
 model Admin {
-  id          String   @id @default(uuid())
+  id          String   @id @default(cuid())
   userId      String   @unique
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   fullName    String
@@ -265,7 +265,7 @@ model Admin {
 // ============================================
 
 model Session {
-  id           String       @id @default(uuid())
+  id           String       @id @default(cuid())
   userId       String
   user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   childId      String?
@@ -290,7 +290,7 @@ model Session {
 }
 
 model OTPVerification {
-  id          String      @id @default(uuid())
+  id          String      @id @default(cuid())
   userId      String?
   user        User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
   contactType String      // email | phone
@@ -314,7 +314,7 @@ model OTPVerification {
 // ============================================
 
 model ConsentRecord {
-  id            String       @id @default(uuid())
+  id            String       @id @default(cuid())
   parentId      String
   parent        Parent       @relation(fields: [parentId], references: [id], onDelete: Cascade)
   consentType   ConsentType
@@ -338,7 +338,7 @@ model ConsentRecord {
 // ============================================
 
 model LevelDomain {
-  id              String   @id @default(uuid())
+  id              String   @id @default(cuid())
   levelId         String
   level           Level      @relation(fields: [levelId], references: [id], onDelete: Cascade)
   domainId        String
@@ -351,7 +351,7 @@ model LevelDomain {
 }
 
 model Level {
-  id          String       @id @default(uuid())
+  id          String       @id @default(cuid())
   code        ChildLevel   @unique
   name        String
   nameHi      String?
@@ -380,7 +380,7 @@ model Level {
 }
 
 model Domain {
-  id          String    @id @default(uuid())
+  id          String    @id @default(cuid())
   code        String    @unique
   name        String
   nameHi      String?
@@ -409,7 +409,7 @@ model Domain {
 // ============================================
 
 model Competency {
-  id            String    @id @default(uuid())
+  id            String    @id @default(cuid())
   code          String    @unique
   levelId       String
   level         Level     @relation(fields: [levelId], references: [id], onDelete: Cascade)
@@ -442,7 +442,7 @@ model Competency {
 // ============================================
 
 model LearningOutcome {
-  id              String    @id @default(uuid())
+  id              String    @id @default(cuid())
   code            String    @unique
   competencyId    String
   competency      Competency @relation(fields: [competencyId], references: [id], onDelete: Cascade)
@@ -476,7 +476,7 @@ model LearningOutcome {
 // ============================================
 
 model Activity {
-  id                  String         @id @default(uuid())
+  id                  String         @id @default(cuid())
   code                String         @unique
   title               String
   titleHi             String?
@@ -503,7 +503,7 @@ model Activity {
   configuration       Json           @default("{}") // activity-specific config
   hints               Json           @default("[]")
   reward              Json           @default("{}")
-  prerequisites       String[]       @default([])
+  prerequisites       Json           @default("[]")
   status              ActivityStatus @default(DRAFT)
   version             Int            @default(1)
   publishedAt         DateTime?
@@ -533,7 +533,7 @@ model Activity {
 // ============================================
 
 model ActivityQuestion {
-  id          String   @id @default(uuid())
+  id          String   @id @default(cuid())
   activityId  String
   activity    Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
   questionText String
@@ -563,7 +563,7 @@ model ActivityQuestion {
 // ============================================
 
 model ActivityAttempt {
-  id              String   @id @default(uuid())
+  id              String   @id @default(cuid())
   childId         String
   child           ChildProfile @relation(fields: [childId], references: [id], onDelete: Cascade)
   activityId      String
@@ -592,7 +592,7 @@ model ActivityAttempt {
 // ============================================
 
 model LearningPath {
-  id              String   @id @default(uuid())
+  id              String   @id @default(cuid())
   childId         String
   child           ChildProfile @relation(fields: [childId], references: [id], onDelete: Cascade)
   name            String
@@ -613,7 +613,7 @@ model LearningPath {
 }
 
 model LearningPathItem {
-  id              String   @id @default(uuid())
+  id              String   @id @default(cuid())
   learningPathId  String
   learningPath    LearningPath @relation(fields: [learningPathId], references: [id], onDelete: Cascade)
   activityId      String
@@ -634,7 +634,7 @@ model LearningPathItem {
 }
 
 model SkillMastery {
-  id              String       @id @default(uuid())
+  id              String       @id @default(cuid())
   childId         String
   child           ChildProfile @relation(fields: [childId], references: [id], onDelete: Cascade)
   competencyId    String
@@ -656,7 +656,7 @@ model SkillMastery {
 }
 
 model ChildProgress {
-  id              String   @id @default(uuid())
+  id              String   @id @default(cuid())
   childId         String
   child           ChildProfile @relation(fields: [childId], references: [id], onDelete: Cascade)
   domainId        String
@@ -683,7 +683,7 @@ model ChildProgress {
 // ============================================
 
 model Reward {
-  id              String      @id @default(uuid())
+  id              String      @id @default(cuid())
   code            String      @unique
   name            String
   nameHi          String?
@@ -708,7 +708,7 @@ model Reward {
 }
 
 model ChildBadge {
-  id          String   @id @default(uuid())
+  id          String   @id @default(cuid())
   childId     String
   child       ChildProfile @relation(fields: [childId], references: [id], onDelete: Cascade)
   rewardId    String
@@ -723,7 +723,7 @@ model ChildBadge {
 }
 
 model Streak {
-  id              String   @id @default(uuid())
+  id              String   @id @default(cuid())
   childId         String
   child           ChildProfile @relation(fields: [childId], references: [id], onDelete: Cascade)
   startDate       DateTime @db.Date
@@ -744,7 +744,7 @@ model Streak {
 // ============================================
 
 model Story {
-  id              String      @id @default(uuid())
+  id              String      @id @default(cuid())
   code            String      @unique
   title           String
   titleHi         String?
@@ -780,7 +780,7 @@ model Story {
 }
 
 model StoryScene {
-  id              String   @id @default(uuid())
+  id              String   @id @default(cuid())
   storyId         String
   story           Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
   sceneNumber     Int
@@ -808,7 +808,7 @@ model StoryScene {
 }
 
 model Rhyme {
-  id              String      @id @default(uuid())
+  id              String      @id @default(cuid())
   code            String      @unique
   title           String
   titleHi         String?
@@ -843,7 +843,7 @@ model Rhyme {
 // ============================================
 
 model ParentRecommendation {
-  id              String   @id @default(uuid())
+  id              String   @id @default(cuid())
   parentId        String
   parent          Parent   @relation(fields: [parentId], references: [id], onDelete: Cascade)
   childId         String
@@ -870,7 +870,7 @@ model ParentRecommendation {
 }
 
 model OfflineActivity {
-  id              String   @id @default(uuid())
+  id              String   @id @default(cuid())
   code            String   @unique
   title           String
   titleHi         String?
@@ -899,7 +899,7 @@ model OfflineActivity {
 }
 
 model OfflineActivityCompletion {
-  id                  String   @id @default(uuid())
+  id                  String   @id @default(cuid())
   childId             String
   child               ChildProfile @relation(fields: [childId], references: [id], onDelete: Cascade)
   offlineActivityId   String
@@ -919,7 +919,7 @@ model OfflineActivityCompletion {
 // ============================================
 
 model WeeklyReport {
-  id              String   @id @default(uuid())
+  id              String   @id @default(cuid())
   parentId        String
   parent          Parent   @relation(fields: [parentId], references: [id], onDelete: Cascade)
   childId         String
@@ -950,7 +950,7 @@ model WeeklyReport {
 // ============================================
 
 model Language {
-  id          String    @id @default(uuid())
+  id          String    @id @default(cuid())
   code        LanguageCode @unique
   name        String
   nativeName  String
@@ -965,7 +965,7 @@ model Language {
 }
 
 model Translation {
-  id          String   @id @default(uuid())
+  id          String   @id @default(cuid())
   languageId  String
   language    Language @relation(fields: [languageId], references: [id], onDelete: Cascade)
   namespace   String
@@ -987,7 +987,7 @@ model Translation {
 // ============================================
 
 model AuditLog {
-  id          String   @id @default(uuid())
+  id          String   @id @default(cuid())
   userId      String?
   user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   action      String
